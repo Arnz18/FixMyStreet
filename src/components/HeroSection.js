@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ResponsiveNavbar from './ResponsiveNavbar';
 
 const HeroSection = () => {
   const [email, setEmail] = useState('');
@@ -13,20 +14,7 @@ const HeroSection = () => {
   return (
     <section className="hero-section">
       <div className="hero-container">
-        <nav className="navbar">
-          <div className="logo">
-            <img src="/api/placeholder/50/50" alt="FixMyStreet Logo" />
-            <h1>FixMyStreet</h1>
-          </div>
-          <div className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#how-it-works">How It Works</a>
-            <a href="#testimonials">Impact</a>
-            <a href="#contact">Contact</a>
-            <button className="btn-login">Login</button>
-            <button className="btn-primary">Report Issue</button>
-          </div>
-        </nav>
+        <ResponsiveNavbar />
 
         <div className="hero-content">
           <div className="hero-text">

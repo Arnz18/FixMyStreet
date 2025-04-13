@@ -1,8 +1,34 @@
 import React, { useState } from 'react';
 
+/***********************************************************************
+ * Testimonials Component
+ * ---------------------------------------------------------------------
+ * This functional component renders the Testimonials section of the
+ * application. It displays user testimonials in a carousel format and
+ * highlights various impact statistics. The component leverages state
+ * to cycle through different testimonials.
+ ***********************************************************************/
 const Testimonials = () => {
+
+     /***********************************************************************
+   * State: activeTestimonial
+   * ---------------------------------------------------------------------
+   * 'activeTestimonial' holds the index of the currently visible testimonial.
+   * 'setActiveTestimonial' is used to update this index.
+   ***********************************************************************/
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   
+  /***********************************************************************
+   * Testimonial Data Array
+   * ---------------------------------------------------------------------
+   * Contains a list of testimonial objects, each representing a user or
+   * authority's feedback. Each object includes:
+   *   - 'id': A unique identifier.
+   *   - 'name': Name of the person giving the testimonial.
+   *   - 'role': The role or designation of the individual.
+   *   - 'testimonial': The testimonial text.
+   *   - 'image': A URL or path to the user's avatar image.
+   ***********************************************************************/
   const testimonials = [
     {
       id: 1,
@@ -27,14 +53,41 @@ const Testimonials = () => {
     }
   ];
 
+  /***********************************************************************
+   * Function: handleNext
+   * ---------------------------------------------------------------------
+   * This function updates the 'activeTestimonial' state to the next index.
+   * If the current testimonial is the last in the array, it resets to the
+   * first testimonial (index 0), thus ensuring a continuous loop.
+   ***********************************************************************/
   const handleNext = () => {
     setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
   };
 
+  /***********************************************************************
+   * Function: handlePrev
+   * ---------------------------------------------------------------------
+   * This function decrements the 'activeTestimonial' state to display the
+   * previous testimonial. If the current testimonial is the first, it cycles
+   * back to the last testimonial.
+   ***********************************************************************/
   const handlePrev = () => {
     setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
   };
 
+  /***********************************************************************
+   * Component Rendering
+   * ---------------------------------------------------------------------
+   * The return statement outputs the JSX for the testimonials section.
+   * It includes:
+   *   - A section element with an id and class for styling.
+   *   - A container div for layout management.
+   *   - A header with title and description.
+   *   - A carousel for cycling through testimonials with navigation arrows.
+   *   - Indicators for direct testimonial selection.
+   *   - Impact statistics highlighting key metrics related to the application's
+   *     performance.
+   ***********************************************************************/
   return (
     <section id="testimonials" className="testimonials-section">
       <div className="container">
@@ -42,7 +95,8 @@ const Testimonials = () => {
           <h2>Making Real Impact</h2>
           <p>Hear from citizens and authorities who are transforming their communities</p>
         </div>
-        
+         
+         {/* Testimonials Carousel: Displays current testimonial with navigation buttons */}
         <div className="testimonials-carousel">
           <button className="carousel-arrow prev" onClick={handlePrev}>←</button>
           
@@ -74,7 +128,7 @@ const Testimonials = () => {
             />
           ))}
         </div>
-        
+        {/* Impact Statistics: Display key metrics related to the platform's performance */}
         <div className="impact-stats">
           <div className="impact-item">
             <h3>12,500+</h3>
@@ -98,4 +152,10 @@ const Testimonials = () => {
   );
 };
 
+/***********************************************************************
+ * Export Component
+ * ---------------------------------------------------------------------
+ * Export the Testimonials component as the default export so it can be
+ * imported and utilized in other areas of the application.
+ ***********************************************************************/
 export default Testimonials;

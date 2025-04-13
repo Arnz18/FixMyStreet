@@ -1,6 +1,31 @@
+/***********************************************************************
+ * Import Dependencies
+ * ---------------------------------------------------------------------
+ * Import the React library to utilize JSX and define the component.
+ ***********************************************************************/
 import React from 'react';
 
+/***********************************************************************
+ * HowItWorks Component
+ * ---------------------------------------------------------------------
+ * This functional component represents a section that explains how
+ * the FixMyStreet platform operates through a series of steps. It 
+ * includes:
+ *   - A process flow displaying each step with an icon, title, and description.
+ *   - A demo section that provides a video demonstration and a call-to-action.
+ ***********************************************************************/
 const HowItWorks = () => {
+
+  /***********************************************************************
+   * Step Data Array
+   * ---------------------------------------------------------------------
+   * Define an array of objects where each object represents a process step.
+   * Each step contains:
+   *   - A unique 'id'
+   *   - A 'title' for the step
+   *   - A 'description' detailing the step process
+   *   - An 'icon' to visually represent the step.
+   ***********************************************************************/
   const steps = [
     {
       id: 1,
@@ -34,6 +59,18 @@ const HowItWorks = () => {
     }
   ];
 
+   /***********************************************************************
+   * Component Rendering
+   * ---------------------------------------------------------------------
+   * The return statement outputs the JSX that forms the "How It Works"
+   * section. It includes:
+   *   - A section element with a unique id and class for styling.
+   *   - A header that displays the section's title and subtitle.
+   *   - A process flow that dynamically maps through the 'steps' array 
+   *     to render each process step along with a visual connector between steps.
+   *   - A demo section that contains a demo video placeholder and a 
+   *     call-to-action button to watch the demo.
+   ***********************************************************************/
   return (
     <section id="how-it-works" className="how-it-works-section">
       <div className="container">
@@ -72,5 +109,10 @@ const HowItWorks = () => {
     </section>
   );
 };
-
+/***********************************************************************
+ * Export Component
+ * ---------------------------------------------------------------------
+ * Export the HowItWorks component as the default export, making it
+ * available for import and use in other parts of the application.
+ ***********************************************************************/
 export default HowItWorks;

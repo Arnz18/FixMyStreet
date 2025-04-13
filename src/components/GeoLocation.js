@@ -1,51 +1,79 @@
-/***********************************************************************
- * Import Dependencies
- * ---------------------------------------------------------------------
- * Import the React library and the useState hook for managing component
- * state within this functional component.
- ***********************************************************************/
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-/***********************************************************************
- * MapPreview Component
- * ---------------------------------------------------------------------
- * This component represents an interactive map preview with a dual-view
- * system: one for citizens and another for municipal authorities. It 
- * utilizes a tab interface to switch between views and displays a mocked 
- * set of issue markers on a placeholder map image.
- ***********************************************************************/
-const MapPreview = () => {
+const GeoLocationButton = ({ onLocationDetected }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    /***********************************************************************
-   * State: activeTab
-   * ---------------------------------------------------------------------
-   * Manages the current active tab ('citizen' or 'authority').
-   ***********************************************************************/
+  const detectLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        onLocationDetected({ lat: latitude, lng: longitude });
+        setIsLoading(false);
+      },
+      (err) => {
+        setError(`Error getting location: ${err.message}`);
+        setIsLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+  };
+
+  return (
+    <div className="geolocation-control">
+      <button 
+        className="btn-outline location-btn"
+        onClick={detectLocation}
+        disabled={isLoading}
+      >
+        {isLoading ? 'Detecting...' : 'Use My Current Location'} 📍
+      </button>
+      {error && <p className="error-text">{error}</p>}
+    </div>
+  );
+};
+
+// Enhanced MapPreview component with geolocation
+const MapPreviewWithGeolocation = () => {
   const [activeTab, setActiveTab] = useState('citizen');
+  const [userLocation, setUserLocation] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   
-  /***********************************************************************
-   * Mock Data: mockIssues
-   * ---------------------------------------------------------------------
-   * This array holds sample data representing road issues with properties 
-   * such as id, type, severity, status, and coordinates (lat, lng). It is 
-   * used to simulate markers on the map.
-   ***********************************************************************/
   const mockIssues = [
     { id: 1, type: "Pothole", severity: "High", status: "In Progress", lat: 40, lng: -70 },
     { id: 2, type: "Broken Pavement", severity: "Medium", status: "Reported", lat: 40.05, lng: -70.1 },
     { id: 3, type: "Road Damage", severity: "Low", status: "Resolved", lat: 39.95, lng: -70.15 }
   ];
 
-  /***********************************************************************
-   * Component Rendering
-   * ---------------------------------------------------------------------
-   * Returns the main JSX structure for the map preview section. This 
-   * structure includes:
-   *   - A header with the section title and a description.
-   *   - Tabs for toggling between 'Citizen View' and 'Authority Dashboard'.
-   *   - A map display area with a placeholder image and dynamic issue markers.
-   *   - A sidebar that changes content based on the active tab.
-   ***********************************************************************/
+  // Handle detected location
+  const handleLocationDetected = (location) => {
+    setUserLocation(location);
+    setSelectedLocation(location);
+    // In a real implementation, you would update the map view to center on this location
+    console.log("Location detected:", location);
+  };
+
+  // Simulate map click to set a manual location
+  const handleMapClick = (e) => {
+    // In a real map implementation, you would get coords from the event
+    // Here we're just simulating it with random values near the user's location
+    if (userLocation) {
+      const newLocation = {
+        lat: userLocation.lat + (Math.random() * 0.01 - 0.005),
+        lng: userLocation.lng + (Math.random() * 0.01 - 0.005)
+      };
+      setSelectedLocation(newLocation);
+    }
+  };
+
   return (
     <section className="map-preview-section">
       <div className="container">
@@ -71,7 +99,7 @@ const MapPreview = () => {
         
         <div className="map-container">
           <div className="map-interface">
-            <div className="map-placeholder">
+            <div className="map-placeholder" onClick={handleMapClick}>
               <img src="/api/placeholder/800/500" alt="Interactive Map" />
               
               {/* Mock issue markers */}
@@ -87,6 +115,30 @@ const MapPreview = () => {
                     title={`${issue.type} - ${issue.severity} - ${issue.status}`}
                   />
                 ))}
+                
+                {/* User's current location marker */}
+                {userLocation && (
+                  <div 
+                    className="marker user-location"
+                    style={{ 
+                      top: '50%', 
+                      left: '50%' 
+                    }}
+                    title="Your location"
+                  />
+                )}
+                
+                {/* Selected location marker */}
+                {selectedLocation && selectedLocation !== userLocation && (
+                  <div 
+                    className="marker selected-location"
+                    style={{ 
+                      top: '45%', 
+                      left: '55%' 
+                    }}
+                    title="Selected location"
+                  />
+                )}
               </div>
             </div>
             
@@ -94,16 +146,18 @@ const MapPreview = () => {
               <h3>{activeTab === 'citizen' ? 'Report an Issue' : 'Issue Analytics'}</h3>
               
               {activeTab === 'citizen' ? (
-                /*******************************************************************
-                 * Citizen Controls Section
-                 * -----------------------------------------------------------------
-                 * Provides a form for citizens to report an issue. It includes:
-                 *   - A dropdown for selecting the issue type.
-                 *   - A button to upload a photo.
-                 *   - A textarea for additional description.
-                 *   - A submit button to report the issue.
-                 *******************************************************************/
                 <div className="citizen-controls">
+                  <GeoLocationButton onLocationDetected={handleLocationDetected} />
+                  
+                  {selectedLocation && (
+                    <div className="location-info">
+                      <p><strong>Selected Location:</strong></p>
+                      <p>Lat: {selectedLocation.lat.toFixed(5)}</p>
+                      <p>Lng: {selectedLocation.lng.toFixed(5)}</p>
+                      <p className="location-help">Click elsewhere on the map to change location</p>
+                    </div>
+                  )}
+                  
                   <div className="form-group">
                     <label>Issue Type</label>
                     <select>
@@ -124,18 +178,13 @@ const MapPreview = () => {
                     <textarea placeholder="Describe the issue..."></textarea>
                   </div>
                   
-                  <button className="btn-primary">Submit Report</button>
+                  <button className="btn-primary" disabled={!selectedLocation}>
+                    Submit Report
+                  </button>
                 </div>
               ) : (
-                /*******************************************************************
-                 * Authority Controls Section
-                 * -----------------------------------------------------------------
-                 * This section is designed for municipal authorities and includes:
-                 *   - A summary of issue statistics (open, in progress, resolved).
-                 *   - A filter to narrow down the displayed issues.
-                 *   - A list of issues rendered using the mock data.
-                 *******************************************************************/
                 <div className="authority-controls">
+                  {/* Same as before */}
                   <div className="stats-summary">
                     <div className="stat">
                       <h4>24</h4>
@@ -181,10 +230,4 @@ const MapPreview = () => {
   );
 };
 
-/***********************************************************************
- * Export Component
- * ---------------------------------------------------------------------
- * Export the MapPreview component as the default export so it can be 
- * imported and used in other parts of the application.
- ***********************************************************************/
-export default MapPreview;
+export default MapPreviewWithGeolocation;

@@ -1,6 +1,29 @@
 import React from 'react';
 
+/***********************************************************************
+ * Footer Component
+ * ---------------------------------------------------------------------
+ * This functional component renders the footer section of the website.
+ * It comprises multiple sub-sections including branding, navigation links,
+ * social media connections, and a newsletter signup form, along with legal
+ * links at the bottom. The footer helps users easily access additional
+ * platform information and keeps them connected with updates.
+ ***********************************************************************/
 const Footer = () => {
+    /***********************************************************************
+   * Component Rendering
+   * ---------------------------------------------------------------------
+   * Returns the JSX for the footer, organized as follows:
+   *   - The <footer> element with an id ("contact") and a class for styling.
+   *   - A container that houses all the footer content.
+   *   - A branding section that displays the logo, title, description,
+   *     and social media links.
+   *   - A set of navigational link columns categorizing links into
+   *     "Platform", "Resources", and "Company".
+   *   - A newsletter section with a brief call-to-action and subscription 
+   *     form.
+   *   - A footer bottom area featuring copyright and legal links.
+   ***********************************************************************/
   return (
     <footer id="contact" className="footer">
       <div className="container">
@@ -74,4 +97,10 @@ const Footer = () => {
   );
 };
 
+/***********************************************************************
+ * Export Component
+ * ---------------------------------------------------------------------
+ * Export the Footer component as the default export to make it
+ * accessible for import in other parts of the application.
+ ***********************************************************************/
 export default Footer;

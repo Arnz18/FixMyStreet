@@ -1,6 +1,31 @@
+/***********************************************************************
+ * Import Dependencies
+ * ---------------------------------------------------------------------
+ * Import the React library necessary for creating React components.
+ ***********************************************************************/
 import React from 'react';
 
+/***********************************************************************
+ * KeyFeatures Component
+ * ---------------------------------------------------------------------
+ * This functional component renders a section highlighting the key
+ * features of the application. It uses a grid to display each feature
+ * with an icon, title, and description, along with a call-to-action 
+ * prompting users to get started.
+ ***********************************************************************/
+
 const KeyFeatures = () => {
+
+    /***********************************************************************
+   * Feature Data Array
+   * ---------------------------------------------------------------------
+   * An array of objects, where each object represents a feature with:
+   * - a unique 'id'
+   * - a descriptive 'title'
+   * - a short 'description'
+   * - an 'icon' representing the feature visually.
+   ***********************************************************************/
+
   const features = [
     {
       id: 1,
@@ -40,6 +65,19 @@ const KeyFeatures = () => {
     }
   ];
 
+  /***********************************************************************
+   * Component Rendering
+   * ---------------------------------------------------------------------
+   * The return statement produces the JSX elements for the features
+   * section. It includes:
+   * - A section element with an id and styling class.
+   * - A container div to restrict content width and manage layout.
+   * - A section header featuring the title and a brief description.
+   * - A grid that maps over the features array, rendering each feature
+   *   as a card with an icon, title, and description.
+   * - A call-to-action (CTA) segment encouraging user engagement.
+   ***********************************************************************/
+
   return (
     <section id="features" className="features-section">
       <div className="container">
@@ -66,5 +104,12 @@ const KeyFeatures = () => {
     </section>
   );
 };
+
+/***********************************************************************
+ * Export Component
+ * ---------------------------------------------------------------------
+ * Export the KeyFeatures component as the default export, allowing it 
+ * to be imported and used in other parts of the application.
+ ***********************************************************************/
 
 export default KeyFeatures;
