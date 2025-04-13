@@ -1,0 +1,4 @@
+my-backend/vendor/
+my-backend/.env
+my-backend/storage/
+my-backend/*.log
