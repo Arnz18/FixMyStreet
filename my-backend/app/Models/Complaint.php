@@ -17,7 +17,9 @@ class Complaint extends Model
         'issue_type',
         'details',
         'status',
-        'severity'
+        'severity',
+        'damage_score',
+        'is_verified'
     ];
     
     public function user()
