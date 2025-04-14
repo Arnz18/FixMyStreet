@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from '@react-google-maps/api';
 import { useAuth } from './authcontext';
+import SeverityDisplay from './SeverityDisplay';
 // import AlertDialog from '../AlertDialog';
 
 // Separated GeoLocationButton component for better code organization
 const GeoLocationButton = ({ onLocationDetected }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
   const detectLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser');
@@ -235,8 +235,8 @@ const MapPreviewWithGeolocation = () => {
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [formValues, setFormValues] = useState({
-    issueType: 'Pothole',
-    description: '',
+    issue_type: 'Pothole',
+    details: '',
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -245,6 +245,9 @@ const MapPreviewWithGeolocation = () => {
     message: '',
     type: 'error'
   });
+
+  const [aiResult, setAiResult] = useState(null);
+
   const { currentUser } = useAuth() || {};
   
   // Default location (New Delhi)
@@ -427,19 +430,21 @@ const MapPreviewWithGeolocation = () => {
       
       const data = await response.json();
       
-      // Show success message
+      // Show success message 
       setAlertState({
         isOpen: true,
-        message: 'Complaint submitted successfully!',
+        message: `Complaint submitted successfully! Severity: ${data.severity}, Damage Score: ${data.damage_score}`,
         type: 'success'
       });
+      setAiResult({ severity: data.severity, damageScore: data.damage_score });
       
       // Reset form
       setFormValues({
-        issueType: 'Pothole',
-        description: ''
+        issue_type: 'Pothole',
+        details: ''
       });
       setSelectedFile(null);
+      setSelectedLocation(null);
       
     } catch (error) {
       console.error('Error submitting complaint:', error);
@@ -617,7 +622,7 @@ const MapPreviewWithGeolocation = () => {
   }
 
   return (
-    <section className="map-preview-section">
+    <section id="report" className="map-preview-section">
       <div className="container">
         <div className="section-header">
           <h2>Interactive Maps for Everyone</h2>
@@ -776,11 +781,11 @@ const MapPreviewWithGeolocation = () => {
                   )}
                   
                   <div className="form-group" style={{ marginBottom: '15px' }}>
-                    <label htmlFor="issueType">Issue Type</label>
+                    <label htmlFor="issue_type">Issue Type</label>
                     <select 
-                      id="issueType"
-                      name="issueType"
-                      value={formValues.issueType}
+                      id="issue_type"
+                      name="issue_type"
+                      value={formValues.issue_type}
                       onChange={handleInputChange}
                       style={{ 
                         width: '100%', 
@@ -799,9 +804,9 @@ const MapPreviewWithGeolocation = () => {
                   </div>
                   
                   <div className="form-group" style={{ marginBottom: '15px' }}>
-                    <label htmlFor="photo">Upload Photo</label>
+                    <label htmlFor="image">Upload Photo</label>
                     <input 
-                      id="photo"
+                      id="iamge"
                       type="file" 
                       accept="image/*" 
                       onChange={handleFileChange}
@@ -814,12 +819,12 @@ const MapPreviewWithGeolocation = () => {
                   </div>
                   
                   <div className="form-group" style={{ marginBottom: '15px' }}>
-                    <label htmlFor="description">Description</label>
+                    <label htmlFor="details">Description</label>
                     <textarea 
-                      id="description"
-                      name="description"
+                      id="details"
+                      name="details"
                       placeholder="Describe the issue in detail..." 
-                      value={formValues.description}
+                      value={formValues.details}
                       onChange={handleInputChange}
                       style={{ 
                         width: '100%', 
@@ -864,7 +869,8 @@ const MapPreviewWithGeolocation = () => {
                     {isSubmitting ? 'Submitting...' : 'Submit Report'}
                   </button>
                 </form>
-              ) : (
+              )
+              : (
                 <div className="progress-tracker-controls">
                   <div className="stats-summary" style={{ 
                     display: 'flex', 
@@ -942,6 +948,21 @@ const MapPreviewWithGeolocation = () => {
                   <div className="activities-container" style={{ height: 'calc(100% - 200px)', overflowY: 'auto' }}>
                     <ProgressTracker activities={mockActivities} />
                   </div>
+                </div>
+              )}
+              {/* Add the SeverityDisplay component here, after the form but still inside the citizen tab content */}
+              {activeTab === 'citizen' && aiResult && (
+                <div className="severity-result" style={{ 
+                  marginTop: '20px', 
+                  padding: '15px', 
+                  backgroundColor: 'var(--bg-secondary)', 
+                  borderRadius: '5px',
+                  border: '1px solid var(--border-color)'
+                }}>
+                  <SeverityDisplay 
+                    severity={aiResult.severity}
+                    damageScore={aiResult.damageScore}
+                  />
                 </div>
               )}
             </div>

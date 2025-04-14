@@ -4,43 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Models\Complaint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ComplaintController extends Controller
 {
     /**
-     * Display a listing of all complaints (admin only).
-     */
-    public function index()
-    {
-        // This would typically have admin authorization
-        // Changed to retrieve ALL complaints, not just the current user's
-        $complaints = Complaint::with('user:id,name,email')->latest()->get();
-        
-        return response()->json([
-            'complaints' => $complaints
-        ]);
-    }
-
-    /**
-     * Store a newly created complaint.
+     * Store a newly created complaint in storage.
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:5048', // 5MB max
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'issue_type' => 'required|in:Pothole,Roa Damage,Broken Pavement,Other',
-            'details' => 'required|string|max:500',
-        ]);
-    
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('complaints', 'public');
-            $imageFullPath = storage_path('app/public/' . $imagePath);
+        \Log::info('Complaint submission started', $request->all());
+        try {
+            // Validate request
+            $validated = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg|max:5048',
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric',
+                'issue_type' => 'required|string|max:50',
+                'details' => 'required|string|max:500',
+            ]);
             
-            // Call AI service for road damage verification
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('complaints', 'public');
+                $imageFullPath = storage_path('app/public/' . $imagePath);
+            } else {
+                return response()->json(['message' => 'Image file is required'], 422);
+            }
+            
+            // Create complaint
+            $complaint = new Complaint();
+            $complaint->user_id = Auth::id();
+            $complaint->issue_type = $validated['issue_type'];
+            $complaint->details = $validated['details'];
+            $complaint->latitude = $validated['latitude'];
+            $complaint->longitude = $validated['longitude'];
+            $complaint->status = 'reported';
+            $complaint->severity = 'low'; // Default severity
+            $complaint->image_path = $imagePath;
+            $complaint->save();
+            
+            // AI service call
             try {
                 $client = new \GuzzleHttp\Client();
                 $response = $client->post('http://localhost:5000/analyze', [
@@ -56,39 +61,36 @@ class ComplaintController extends Controller
                 $severity = $aiResult['severity'] ?? 'low';
                 $damageDetected = $aiResult['damage_detected'] ?? false;
                 $damageScore = $aiResult['final_score'] ?? 0;
+                
+                $complaint->severity = $severity;
+                $complaint->save();
+                
+                return response()->json([
+                    'message' => 'Complaint submitted successfully',
+                    'complaint' => $complaint,
+                    'severity' => $severity,
+                    'damage_score' => $damageScore,
+                    'image_url' => asset('storage/' . $imagePath)
+                ], 201);
             } catch (\Exception $e) {
-                // If AI service fails, default to low severity
-                $severity = 'low';
-                $damageDetected = false;
-                $damageScore = 0;
+                // If AI service fails, return with default severity
                 \Log::error('AI service error: ' . $e->getMessage());
+                
+                return response()->json([
+                    'message' => 'Complaint submitted successfully (AI service unavailable)',
+                    'complaint' => $complaint,
+                    'severity' => 'low',
+                    'damage_score' => 0,
+                    'image_url' => asset('storage/' . $imagePath)
+                ], 201);
             }
-        } else {
-            return response()->json(['message' => 'Image file is required'], 422);
+        } catch (\Exception $e) {
+            \Log::error('Complaint submission error: ' . $e->getMessage());
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
         }
-    
-        // Create the complaint
-        $complaint = $request->user()->complaints()->create([
-            'image_path' => $imagePath,
-            'latitude' => $validated['latitude'],
-            'longitude' => $validated['longitude'],
-            'issue_type' => $validated['issue_type'],
-            'details' => $validated['details'],
-            'status' => 'reported',
-            'severity' => $severity,
-            'damage_score' => $damageScore,
-            'is_verified' => $damageDetected
-        ]);
-    
-        return response()->json([
-            'message' => 'Complaint reported successfully',
-            'complaint' => $complaint,
-            'image_url' => asset('storage/' . $imagePath),
-            'ai_analysis' => $aiResult ?? null
-        ], 201);
     }
     
-
+    
     /**
      * Display the specified complaint.
      */

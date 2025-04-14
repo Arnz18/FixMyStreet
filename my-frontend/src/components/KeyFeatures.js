@@ -95,11 +95,11 @@ const KeyFeatures = () => {
             </div>
           ))}
         </div>
-        
+{/*         
         <div className="features-cta">
           <h3>Ready to improve your community's roads?</h3>
           <button className="btn-primary">Get Started</button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

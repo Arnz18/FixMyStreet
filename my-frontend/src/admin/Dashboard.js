@@ -57,7 +57,7 @@ const Dashboard = () => {
     },
     {
       id: 'REP-2025-1085',
-      type: 'Street Light Broken',
+      type: 'Crack in road',
       location: 'Indira Nagar',
       severity: 'Medium',
       status: 'Assigned',

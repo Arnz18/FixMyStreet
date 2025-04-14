@@ -53,9 +53,9 @@ def map_prediction_to_score(pred):
 
 # Function to map damage score to severity level
 def map_score_to_severity(score):
-    if score >= 80:
+    if score >= 50:
         return "high"
-    elif score >= 50:
+    elif score >= 20:
         return "medium"
     else:
         return "low"
