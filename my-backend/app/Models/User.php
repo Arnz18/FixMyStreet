@@ -21,6 +21,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
+        'employee_id',
+        'department_code',
+        'government_id',
+        'phone',
+        'date_of_birth',
     ];
 
     /**
@@ -41,6 +47,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
+        'date_of_birth' => 'date',
     ];
     
     // ADD THE NEW RELATIONSHIP METHOD HERE

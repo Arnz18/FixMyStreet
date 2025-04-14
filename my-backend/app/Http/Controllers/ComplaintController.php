@@ -31,7 +31,7 @@ class ComplaintController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg|max:5048', // 5MB max
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
-            'issue_type' => 'required|in:pothole,road_damage,drainage,other',
+            'issue_type' => 'required|in:Pothole,Roa Damage,Broken Pavement,Other',
             'details' => 'required|string|max:500',
         ]);
     

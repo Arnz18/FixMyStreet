@@ -11,27 +11,42 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:8',
-        ]);
+public function register(Request $request)
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|confirmed|min:8',
+        'is_admin' => 'sometimes|boolean',
+        'employee_id' => 'sometimes|string|max:255',
+        'department_code' => 'sometimes|string|max:255',
+        'government_id' => 'sometimes|string|max:255',
+        'phone' => 'sometimes|string|max:20',
+        'date_of_birth' => 'sometimes|date',
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    // Create user with validated data
+    $user = User::create([
+        'name' => $validatedData['name'],
+        'email' => $validatedData['email'],
+        'password' => Hash::make($validatedData['password']),
+        'is_admin' => $validatedData['is_admin'] ?? false,
+        'employee_id' => $validatedData['employee_id'] ?? null,
+        'department_code' => $validatedData['department_code'] ?? null,
+        'government_id' => $validatedData['government_id'] ?? null,
+        'phone' => $validatedData['phone'] ?? null,
+        'date_of_birth' => $validatedData['date_of_birth'] ?? null,
+    ]);
 
-        $token = $user->createToken('auth-token')->plainTextToken;
+    // Create token
+    $token = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ], 201);
-    }
+    return response()->json([
+        'user' => $user,
+        'token' => $token
+    ], 201);
+}
+
 
     public function login(Request $request)
     {
