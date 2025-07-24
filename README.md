@@ -1,6 +1,4 @@
-# Endgame_ESOC-X-HACK
-
-## **FixMyStreet** 🚧
+# **FixMyStreet** 🚧
 
 A civic tech platform that empowers citizens to report road issues like potholes and broken pavements, leveraging React, Laravel, and OpenCV. FixMyStreet enables real-time reporting, AI-powered damage detection, and transparent  tracking of resolutions to improve road safety and foster accountability.
 
