@@ -1,6 +1,6 @@
 # 🚧 FixMyStreet
 
-**FixMyStreet** is a civic tech platform that empowers citizens to report road issues like potholes and broken pavements. Built using **React**, **Laravel**, and **OpenCV**, the platform facilitates real-time issue reporting, AI-powered damage detection, and transparent complaint tracking — driving accountability and improving road safety across urban India.
+**FixMyStreet** is a civic tech platform that empowers citizens to report road issues such as potholes and damaged pavements. Built with **React**, **Laravel**, and **OpenCV**, the platform offers real-time issue reporting, AI-powered damage detection, and transparent complaint tracking — all designed to promote accountability and improve road safety across urban India.
 
 ---
 
@@ -43,7 +43,7 @@ Here’s a preview of FixMyStreet in action:
 
 ## 🛣️ Overview
 
-India loses thousands of lives every year due to poor road infrastructure. Citizens often lack a streamlined way to report these issues — and authorities struggle to prioritize repairs due to unclear data.
+India suffers thousands of casualties annually due to poor road conditions. Citizens lack an efficient way to report these problems, and authorities face difficulty prioritizing repairs due to inconsistent data.
 
 **FixMyStreet bridges this civic gap by providing:**
 
@@ -83,17 +83,17 @@ India loses thousands of lives every year due to poor road infrastructure. Citiz
 
 ## 🧱 Architecture
 User (Frontend - React)
-↓
+          ↓
 Report with Image & Location
-↓
+          ↓
 Backend API (Laravel)
-↓
+          ↓
 AI Service (Python + OpenCV)
-↓
+          ↓
 Pothole Verification + Severity Detection
-↓
+          ↓
 Database (MySQL)
-↓
+          ↓
 Admin Dashboard & Citizen Complaint Status
 
 
@@ -103,10 +103,11 @@ Admin Dashboard & Citizen Complaint Status
 
 ### 🧩 Prerequisites
 
+Ensure the following are installed:
 - Node.js & npm
-- Composer
-- PHP & Laravel
-- Python 3 (for AI)
+- PHP & Composer
+- Laravel CLI
+- Python 3.x
 - MySQL Server
 
 ### 📦 Frontend Setup
@@ -180,8 +181,3 @@ We use OpenCV to analyze uploaded images and detect potholes. This includes:
 | Ojaswi Joshi | [@OjaswiJoshi13](https://github.com/OjaswiJoshi13) |
 
 ```Together, we can pave the road to smarter civic infrastructure.```
-
-
-
-
-
